@@ -1,0 +1,340 @@
+    <div class="modal fade" id="modalFormInventario" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header headerRegister">
+                    <h5 class="modal-title" id="titleModal">Nuevo Inventario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="tile">
+                        <div class="tile-body">
+                            <form id="formInventario" name="formInventario" class="form-horizontal">
+                                <input type="hidden" id="_method" name="_method" value="post">
+                                <input type="hidden" id="editIndex" name="editIndex" value="">
+                                <input type="hidden" id="idInventario" name="idInventario" value="">
+
+                                <!-- Información del Movimiento -->
+                                <div class="form-row mb-3">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Fecha de Carga</label>
+                                            <input class="form-control" id="fechaCarga" name="fechaCarga" type="date" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="grupoTecnico">Grupo Técnico</label>
+                                            <select class="form-control" id="grupoTecnico" name="grupoTecnico">
+                                                <option value="">Seleccione el grupo técnico</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="estado">Estado</label>
+                                            <select class="form-control" id="estado" name="estado">
+                                                <option value="1">Activo</option>
+                                                <option value="0">Inactivo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Información del Artículo -->
+                                <div class="form-row mb-3">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Código del Material</label>
+                                            <input class="form-control" id="codigo" name="codigo" type="text"
+                                                placeholder="Código del material" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Material</label>
+                                            <select class="form-control" id="material" name="material"
+                                                onchange="cargarTipoMaterial(this.value)">
+                                                <option value="">Seleccione el material</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Tipo de Material</label>
+                                            <input class="form-control" id="tipo" name="tipo" type="text"
+                                                placeholder="Tipo de material" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label class="control-label">Cantidad</label>
+                                            <input class="form-control" id="cantidad" name="cantidad" type="number"
+                                                placeholder="Cantidad" value="1" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1 d-flex align-items-end">
+                                        <div class="form-group">
+                                            <button type="button" class="form-control btn btn-info fa fa-plus-circle"></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row mb-3" id="seriesFields" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="serie1">Serie 1</label>
+                                            <input type="text" class="form-control" id="serie1" name="serie1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="serie2">Serie 2</label>
+                                            <input type="text" class="form-control" id="serie2" name="serie2">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tabla para materiales agregados -->
+                                <div class="form-row mb-3">
+                                    <div class="col-md-12">
+                                        <table class="table table-hover table-bordered" id="materialesTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nombre</th>
+                                                    <th>Tipo</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Serie 1</th>
+                                                    <th>Serie 2</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="materialesTableBody">
+                                                <!-- Las filas se agregarán dinámicamente aquí -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- Botón para cargar desde Excel -->
+                                <div class="form-row mb-3">
+                                    <div class="col-md-12 text-right">
+                                        <input type="file" id="inputExcel" class="d-none" accept=".xls,.xlsx">
+                                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('inputExcel').click()">Cargar desde Excel</button>
+                                    </div>
+                                </div>
+
+                                <!-- Botones de acción -->
+                                <div class="tile-footer d-flex justify-content-end">
+                                    <button id="btnActionForm" class="btn btn-primary" type="button">
+                                        <i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Guardar</span>
+                                    </button>&nbsp;&nbsp;&nbsp;<a class="btn btn-secondary" href="#"
+                                        data-dismiss="modal"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    window.agregarMaterial = function() {
+        const materialSelect = document.getElementById('material');
+        const materialText = materialSelect.options[materialSelect.selectedIndex].text;
+        const id = materialSelect.value;  // Asegúrate de que este sea el id del material
+        const tipo = document.getElementById('tipo').value;
+        const cantidad = document.getElementById('cantidad').value;
+        const serie1 = document.getElementById('serie1').value;
+        const serie2 = document.getElementById('serie2').value;
+        const editIndex = document.getElementById('editIndex').value;
+
+        if (id === "" || cantidad === "" || tipo === "") {
+            alert("Por favor, complete todos los campos requeridos.");
+            return;
+        }
+
+        const tableBody = document.getElementById('materialesTableBody');
+
+        if (editIndex !== "") {
+            // Edit existing row
+            const row = tableBody.rows[editIndex];
+            row.cells[0].innerText = id;
+            row.cells[1].innerText = materialText;
+            row.cells[2].innerText = tipo;
+            row.cells[3].innerText = cantidad;
+            row.cells[4].innerText = serie1;
+            row.cells[5].innerText = serie2;
+        } else {
+            // Add new row
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="id">${id}</td>
+                <td class="nombre">${materialText}</td>
+                <td class="tipo">${tipo}</td>
+                <td class="cantidad">${cantidad}</td>
+                <td class="serie1">${serie1}</td>
+                <td class="serie2">${serie2}</td>
+                <td>
+                    <button type="button" class="btn btn-warning btn-sm text-white" onclick="editarMaterial(this)">Editar</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarMaterial(this)">Eliminar</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        }
+
+        // Limpiar campos del formulario
+        materialSelect.value = '';
+        document.getElementById('codigo').value = '';
+        document.getElementById('tipo').value = '';
+        document.getElementById('cantidad').value = 1;
+        document.getElementById('serie1').value = '';
+        document.getElementById('serie2').value = '';
+        document.getElementById('editIndex').value = '';
+        toggleSeriesFields();
+    };
+
+    window.editarMaterial = function(button) {
+        const row = button.parentElement.parentElement;
+        const cells = row.cells;
+
+        document.getElementById('codigo').value = cells[0].innerText;
+        const materialSelect = document.getElementById('material');
+        const options = materialSelect.options;
+
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].text === cells[1].innerText) {
+                materialSelect.selectedIndex = i;
+                break;
+            }
+        }
+
+        document.getElementById('tipo').value = cells[2].innerText;
+        document.getElementById('cantidad').value = cells[3].innerText;
+        document.getElementById('serie1').value = cells[4].innerText;
+        document.getElementById('serie2').value = cells[5].innerText;
+        document.getElementById('editIndex').value = row.rowIndex - 1; // Adjust for header row
+
+        toggleSeriesFields();
+    };
+
+    window.eliminarMaterial = function(button) {
+        const row = button.parentElement.parentElement;
+        row.remove();
+    };
+
+    window.toggleSeriesFields = function() {
+        var seriesFields = document.getElementById('seriesFields');
+        var tipo = document.getElementById('tipo').value;
+
+        if (tipo === 'activo') {
+            seriesFields.style.display = 'flex';
+        } else {
+            seriesFields.style.display = 'none';
+        }
+    };
+
+    window.cargarDesdeExcel = function(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet);
+
+            const tableBody = document.getElementById('materialesTableBody');
+
+            rows.forEach(row => {
+                const rowElement = document.createElement('tr');
+
+                const id = row['ID'] || '';
+                const nombre = row['Nombre'] || '';
+                const tipo = row['Tipo'] || '';
+                const cantidad = row['Cantidad'] || '';
+                const serie1 = row['Serie 1'] || '';
+                const serie2 = row['Serie 2'] || '';
+
+                rowElement.innerHTML = `
+                    <td class="id">${id}</td>
+                    <td class="nombre">${nombre}</td>
+                    <td class="tipo">${tipo}</td>
+                    <td class="cantidad">${cantidad}</td>
+                    <td class="serie1">${serie1}</td>
+                    <td class="serie2">${serie2}</td>
+                    <td>
+                        <button type="button" class="btn btn-warning btn-sm text-white" onclick="editarMaterial(this)">Editar</button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarMaterial(this)">Eliminar</button>
+                    </td>
+                `;
+
+                tableBody.appendChild(rowElement);
+            });
+        };
+
+        reader.readAsArrayBuffer(file);
+    };
+
+    window.guardarInventario = function() {
+        const fechaCarga = document.getElementById('fechaCarga').value;
+        const grupoTecnico = document.getElementById('grupoTecnico').value;
+        const estado = document.getElementById('estado').value;
+
+        const tableBody = document.getElementById('materialesTableBody');
+        const materiales = [];
+
+        for (let i = 0; i < tableBody.rows.length; i++) {
+            const row = tableBody.rows[i];
+            const material = {
+                id: row.cells[0].innerText,
+                nombre: row.cells[1].innerText,
+                tipo: row.cells[2].innerText,
+                cantidad: row.cells[3].innerText,
+                serie1: row.cells[4].innerText,
+                serie2: row.cells[5].innerText
+            };
+            materiales.push(material);
+        }
+
+        const data = {
+            fechaCarga: fechaCarga,
+            grupoTecnico: grupoTecnico,
+            estado: estado,
+            materiales: materiales
+        };
+
+        console.log("Datos a enviar: ", data);
+
+        fetch('/inventarios/agregar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error('Error en la respuesta del servidor.');
+            }
+        }).then(data => {
+            // Manejar la respuesta del servidor
+            alert("Inventario guardado con éxito");
+            location.reload();
+        }).catch(error => {
+            console.error('Error:', error);
+            alert("Error al guardar el inventario");
+        });
+    };
+
+    document.getElementById('btnActionForm').addEventListener('click', window.guardarInventario);
+    document.getElementById('inputExcel').addEventListener('change', window.cargarDesdeExcel);
+    document.querySelector('.fa-plus-circle').addEventListener('click', window.agregarMaterial);
+});
+
+</script>

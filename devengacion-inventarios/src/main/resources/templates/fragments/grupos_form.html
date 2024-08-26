@@ -1,0 +1,66 @@
+<!--<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Nuevo grupo</title>
+</head>
+
+<body>-->
+<!-- Modal -->
+<div class="modal fade" id="modalFormGrupoTecnico" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header headerRegister">
+				<h5 class="modal-title" id="titleModal">Nuevo Grupo Tecnico</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="tile">
+					<div class="tile-body">
+						<form th:method="post" enctype="multipart/form-data" id="formGrupoTecnico"
+							th:action="@{'/grupos/guardar'}">
+							<input type="hidden" id="id" name="id">
+							<input type="hidden" id="_method" name="_method" value="post" />
+							<div class="form-group">
+								<label class="control-label">CODIGO DE GRUPO</label>
+								<input class="form-control" id="codigo" name="codigo" type="text"
+									placeholder="Codigo de grupo">
+							</div>
+							<div class="form-group">
+								<label class="control-label">JEFE DE GRUPO</label>
+								<input class="form-control" id="jefeDeGrupo" name="jefeDeGrupo" type="text"
+									placeholder="Jefe de grupo">
+							</div>
+							<div class="form-group">
+								<label class="control-label">DESCRIPCION</label>
+								<textarea class="form-control" id="descripcion" name="descripcion" type="text"
+									placeholder="Descripcion"></textarea>
+							</div>
+							<div class="form-group">
+								<label for="exampleSelect1">ESTADO</label>
+								<select class="form-control" id="estado" name="estado">
+									<option value="1">ACTIVO</option>
+									<option value="2">INACTIVO</option>
+								</select>
+							</div>
+							<div class="tile-footer">
+								<button id="btnActionForm" class="btn btn-primary" type="submit"><i
+										class="fa fa-fw fa-lg fa-check-circle"></i><span
+										id="btnText">Guardar</span></button>&nbsp;&nbsp;&nbsp;<a
+									class="btn btn-secondary" href="#" data-dismiss="modal"><i
+										class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--</body>
+
+</html>-->

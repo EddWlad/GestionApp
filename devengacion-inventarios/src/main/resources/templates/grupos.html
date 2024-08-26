@@ -1,0 +1,141 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+
+<div>
+	<main class="app-content">
+		<div class="app-title">
+			<div>
+				<ul class="app-breadcrumb breadcrumb">
+					<li class="breadcrumb-item">
+						<h1><i class="fa fa-users"></i> Grupos Tecnicos
+							<button class="btn btn-outline-primary ml-1" onClick="openModal();" type="button"><i
+									class="fa fa-plus-circle"></i> Nuevo</button>
+						</h1>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tile">
+					<div class="tile-body">
+						<div th:if="${message != null}"
+							class="alert alert-success alert-dismissible fade show text-center message">
+							[[${message}]]</div>
+						<div th:if="${errorMessage != null}"
+							class="alert alert-danger alert-dismissible fade show text-center">
+							[[${errorMessage}]]
+						</div>
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered" id="sampleTable">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>CODIGO</th>
+										<th>JEFE DE GRUPO</th>
+										<th>DESCRIPCION</th>
+										<th>ESTADO</th>
+										<th class="col-2">ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="grupoTecnico : ${listarGrupoTecnico}">
+										<td>[[${grupoTecnico.id}]]</td>
+										<td>[[${grupoTecnico.codigo}]]</td>
+										<td>[[${grupoTecnico.jefeDeGrupo}]]</td>
+										<td>[[${grupoTecnico.descripcion}]]</td>
+										<td>
+											<span th:if="${grupoTecnico.estado == 1}">
+												<span class="badge badge-success">Activo</span>
+											</span>
+											<span th:if="${grupoTecnico.estado == 2}">
+												<span class="badge badge-danger">Inactivo</span>
+											</span>
+										</td>
+										<td class="form-group col-md-2">
+											<button class="btn btn-primary  btn-sm btnEditRol"
+												th:onclick="'javascript:fntEditarGrupoTecnico(' + ${grupoTecnico.id} + ')'"
+												title="Editar Grupo Tecnico"><i class="fa fa-pencil"></i></button>
+											<button class="btn btn-danger btn-sm btnDelRol"
+												th:onclick="'javascript:fntEliminarGrupoTecnico(' + ${grupoTecnico.id} + ')'"
+												title="Eliminar Grupo Tecnico"><i class="fa fa-trash"></i></button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script th:inline="javascript">
+	async function fntEliminarGrupoTecnico(idGrupoTecnico) {
+		swal({
+			title: "Eliminar Destinatario",
+			text: "¿Realmente quiere eliminar este grupo tecnico?",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Si, eliminar!",
+			cancelButtonText: "No, cancelar!",
+			closeOnConfirm: false,
+			closeOnCancel: true
+		}, async function (isConfirm) {
+
+			if (isConfirm) {
+				let res = await fetch(`/grupos/eliminar/${idGrupoTecnico}`, {
+					method: 'DELETE'
+				}),
+					json = await res.json();
+				if (json) {
+					swal("Eliminar!", "Destinatario eliminado correctamente.", "success");
+					location.reload();
+				} else {
+					swal("Atención!", "No se pudo eliminar el grupo tecnico.", "error");
+				}
+			}
+
+		});
+	}
+	async function fntEditarGrupoTecnico(idGrupoTecnico) {
+		document.querySelector('#titleModal').innerHTML = "Actualizar Destinatario";
+		document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+		document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+		document.querySelector('#btnText').innerHTML = "Actualizar";
+		let ajaxUrl = "/grupos/editar/" + idGrupoTecnico;
+		let res = await fetch(ajaxUrl),
+			json = await res.json();
+		if (json) {
+			var formDestinatario = document.getElementById('formGrupoTecnico');
+			const destinatarioId = formDestinatario.setAttribute('action', `grupos/editar/${json.id}`);
+			document.querySelector("#_method").value = "put";
+			document.querySelector("#id").value = json.id;
+			document.querySelector("#codigo").value = json.codigo;
+			document.querySelector("#jefeDeGrupo").value = json.jefeDeGrupo;
+			document.querySelector("#descripcion").value = json.descripcion;
+			document.querySelector("#estado").value = json.estado;
+		}
+		$('#modalFormGrupoTecnico').modal('show');
+	}
+
+	function openModal() {
+		var formDestinatario = document.getElementById('formGrupoTecnico');
+		const destinatarioId = formDestinatario.setAttribute('action', 'grupos/guardar');
+		document.querySelector("#_method").value = "post";
+		document.querySelector("#id").value = "";
+		document.querySelector("#codigo").value = "";
+		document.querySelector("#jefeDeGrupo").value = "";
+		document.querySelector("#descripcion").value = "";
+		document.querySelector("#estado").value = "";
+		document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+		document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+		document.querySelector('#btnText').innerHTML = "Guardar";
+		document.querySelector('#titleModal').innerHTML = "Nuevo Grupo Tecnico";
+		$('#modalFormGrupoTecnico').modal('show');
+	}
+</script>
+
+<div th:replace="fragments/grupos_form"></div>
+<div th:replace="fragments/footer"></div>

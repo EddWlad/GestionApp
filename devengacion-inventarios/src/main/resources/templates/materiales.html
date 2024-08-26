@@ -1,0 +1,130 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+
+<div>
+	<main class="app-content">
+		<div class="app-title">
+			<div>
+				<ul class="app-breadcrumb breadcrumb">
+					<li class="breadcrumb-item">
+						<h1><i class="fa fa-gavel"></i> Materiales</h1>
+					</li>
+					<li class="breadcrumb-item">
+						<button type="button" title="Agregar" class="btn btn-outline-primary" data-toggle="modal"
+							data-target="#modalFormMateriales">Agregar</button>
+						<button type="button" title="Cargar Materiales" class="btn btn-outline-primary"
+							data-toggle="modal" data-target="#modalFormCargarMateriales">Cargar desde Excel</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tile">
+					<div class="tile-body">
+						<div th:if="${message != null}"
+							class="alert alert-success alert-dismissible fade show text-center message">
+							[[${message}]]</div>
+						<div th:if="${errorMessage != null}"
+							class="alert alert-danger alert-dismissible fade show text-center">
+							[[${errorMessage}]]
+						</div>
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered" id="sampleTable">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>CODIGO</th>
+										<th>NOMBRE</th>
+										<th>ELEMENTO</th>
+										<!--<th>SERIE 1</th>
+										<th>SERIE 2</th>-->
+										<th>ESTADO</th>
+										<th class="col-2">ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="material : ${listarMateriales}">
+										<td>[[${material.id}]]</td>
+										<td>[[${material.codigo}]]</td>
+										<td>[[${material.nombre}]]</td>
+										<td>[[${material.tipo}]]</td>
+										<!--<td
+											th:text="${#lists.isEmpty(material.materialActivo) ? '' : material.materialActivo[0].serie1}">
+										</td>
+										<td
+											th:text="${#lists.isEmpty(material.materialActivo) ? '' : material.materialActivo[0].serie2}">
+										</td>-->
+										<td>
+											<span th:if="${material.estado == 1}">
+												<span class="badge badge-success">Activo</span>
+											</span>
+											<span th:if="${material.estado == 2}">
+												<span class="badge badge-danger">Inactivo</span>
+											</span>
+										</td>
+										<td class="col-2">
+											<button type="button" th:data-id="${material.id}" title="Editar"
+												class="fa-regular fa fa-pencil btn btn-primary btn-edit"
+												style="color: white;" data-toggle="modal"
+												data-target="#modalFormMateriales"></button>
+											<form th:action="@{'/materiales/eliminar/' + ${material.id}}" method="post"
+												style="display:inline;">
+												<input type="hidden" name="_method" value="delete" />
+												<button type="submit" title="Eliminar"
+													class="fa-regular fa fa-trash btn btn-danger"
+													style="color: white;"></button>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const editButtons = document.querySelectorAll('.btn-edit');
+		editButtons.forEach(button => {
+			button.addEventListener('click', function () {
+				const id = this.getAttribute('data-id');
+				fetch(`/materiales/editar/${id}`)
+					.then(response => response.json())
+					.then(data => {
+						document.getElementById('id').value = data.id;
+						document.querySelector("#_method").value = "put";
+						document.getElementById('codigo').value = data.codigo;
+						document.getElementById('nombre').value = data.nombre;
+						document.getElementById('tipo').value = data.tipo;
+						document.getElementById('estado').value = data.estado;
+
+						//document.getElementById('serie1').value = '';
+						//document.getElementById('serie2').value = '';
+
+						/*if (data.tipo === 'activo') {
+							const seriesFields = document.getElementById('seriesFields');
+							seriesFields.style.display = 'block';
+							if (data.materialActivo && data.materialActivo.length > 0) {
+								document.getElementById('serie1').value = data.materialActivo[0].serie1;
+								document.getElementById('serie2').value = data.materialActivo[0].serie2;
+							}
+						} else {
+							seriesFields.style.display = 'none';
+						}*/
+						document.getElementById('titleModal').innerText = 'Editar Material';
+						document.getElementById('btnText').innerText = 'Actualizar';
+						document.getElementById('formMaterial').action = `/materiales/editar/${id}`;
+					});
+			});
+		});
+	});
+</script>
+
+<div th:replace="fragments/cargar_materiales_form"></div>
+<div th:replace="fragments/materiales_form"></div>
+<div th:replace="fragments/footer"></div>
