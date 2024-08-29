@@ -1,18 +1,13 @@
 package com.tidsec.devengacion_inventarios.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,30 +21,25 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name= "grupoTecnico")
-public class GrupoTecnico 
-{
-	
+@Table(name= "materials")
+public class Materials {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private Integer id;
+    @NotNull
+    private Integer code;
     @NotBlank
-    @Column(unique = true)
-    private String codigo;
-
+    private String name;
     @NotBlank
-    private String jefeDeGrupo;
-
+    private String type;
     @NotBlank
-    private String descripcion;
-
+    private String serial1;
+    @NotBlank
+    private String serial2;
     @NotNull
     @Column(columnDefinition = "Integer default 1")
-    private Integer estado;
-    
-    @OneToMany(mappedBy = "grupoTecnico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private List<Inventario> inventarios = new ArrayList<>();
+	private int state;
 
+    @ManyToMany(mappedBy = "materials")
+    private List<Inventory> inventories;
 }

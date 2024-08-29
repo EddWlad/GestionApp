@@ -1,12 +1,7 @@
 package com.tidsec.devengacion_inventarios.entity;
 
 import java.util.Date;
-
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
-import io.micrometer.common.lang.Nullable;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,8 +9,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -31,41 +27,37 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name= "devengacion")
-public class Devengacion 
-{
+@Table(name= "accrual")
+public class Accrual {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_inventario", nullable = false)
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    private Inventario inventario;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
 
-    @NotBlank
-    private String proyectoId;
-
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateInstalation;
     @NotBlank
     private String cluster;
-    
     @NotBlank
-    private String tipoInstalacion;
-    
+    private String proyectId;
+    @NotBlank
+    private String typeInstalation;
     @NotNull
-    private Integer cantidad;
-    
+    private Integer amount;
     @NotNull
-	@Column(columnDefinition = "Integer default 1")
-    private Integer estado;
+    @Column(columnDefinition = "Integer default 1")
+	private int state;
 
-    @Nullable
-    @Temporal(TemporalType.DATE)
-    private Date fechaDevengacion = new Date();
-    
-    @Nullable
-    @Temporal(TemporalType.DATE)
-    private Date fechaInstalacion = new Date();
-    
-    
+    @ManyToOne
+    @JoinColumn(name = "usersId", referencedColumnName = "id")
+    private Users users;
+
+    @ManyToMany
+    @JoinTable(
+      name = "accrualInventory",
+      joinColumns = @JoinColumn(name = "accrualId", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "inventoryId", referencedColumnName = "id"))
+    private List<Inventory> inventories;
 }
