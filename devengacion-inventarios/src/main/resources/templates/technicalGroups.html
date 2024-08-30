@@ -32,7 +32,7 @@
 								<thead>
 									<tr>
 										<th>ID</th>
-										<th>CODIGO</th>
+										<th>NOMBRE</th>
 										<th>JEFE DE GRUPO</th>
 										<th>DESCRIPCION</th>
 										<th>ESTADO</th>
@@ -40,25 +40,25 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="grupoTecnico : ${listarGrupoTecnico}">
-										<td>[[${grupoTecnico.id}]]</td>
-										<td>[[${grupoTecnico.codigo}]]</td>
-										<td>[[${grupoTecnico.jefeDeGrupo}]]</td>
-										<td>[[${grupoTecnico.descripcion}]]</td>
+									<tr th:each="technicalGroup : ${listTechnicalGroup}">
+										<td>[[${technicalGroup.id}]]</td>
+										<td>[[${technicalGroup.name}]]</td>
+										<td>[[${technicalGroup.groupLeader}]]</td>
+										<td>[[${technicalGroup.description}]]</td>
 										<td>
-											<span th:if="${grupoTecnico.estado == 1}">
+											<span th:if="${technicalGroup.state == 1}">
 												<span class="badge badge-success">Activo</span>
 											</span>
-											<span th:if="${grupoTecnico.estado == 2}">
+											<span th:if="${technicalGroup.state == 2}">
 												<span class="badge badge-danger">Inactivo</span>
 											</span>
 										</td>
 										<td class="form-group col-md-2">
 											<button class="btn btn-primary  btn-sm btnEditRol"
-												th:onclick="'javascript:fntEditarGrupoTecnico(' + ${grupoTecnico.id} + ')'"
+												th:onclick="'javascript:fntEditTechnicalGroup(' + ${technicalGroup.id} + ')'"
 												title="Editar Grupo Tecnico"><i class="fa fa-pencil"></i></button>
 											<button class="btn btn-danger btn-sm btnDelRol"
-												th:onclick="'javascript:fntEliminarGrupoTecnico(' + ${grupoTecnico.id} + ')'"
+												th:onclick="'javascript:fntDeleteTechnicalGroup(' + ${technicalGroup.id} + ')'"
 												title="Eliminar Grupo Tecnico"><i class="fa fa-trash"></i></button>
 										</td>
 									</tr>
@@ -72,9 +72,9 @@
 	</main>
 </div>
 <script th:inline="javascript">
-	async function fntEliminarGrupoTecnico(idGrupoTecnico) {
+	async function fntDeleteTechnicalGroup(idTechnicalGroup) {
 		swal({
-			title: "Eliminar Destinatario",
+			title: "Eliminar Grupo Tecnico",
 			text: "¿Realmente quiere eliminar este grupo tecnico?",
 			type: "warning",
 			showCancelButton: true,
@@ -85,12 +85,12 @@
 		}, async function (isConfirm) {
 
 			if (isConfirm) {
-				let res = await fetch(`/grupos/eliminar/${idGrupoTecnico}`, {
+				let res = await fetch(`/technicalGroups/delete/${idTechnicalGroup}`, {
 					method: 'DELETE'
 				}),
 					json = await res.json();
 				if (json) {
-					swal("Eliminar!", "Destinatario eliminado correctamente.", "success");
+					swal("Eliminar!", "Grupo tecnico eliminado correctamente.", "success");
 					location.reload();
 				} else {
 					swal("Atención!", "No se pudo eliminar el grupo tecnico.", "error");
@@ -99,41 +99,41 @@
 
 		});
 	}
-	async function fntEditarGrupoTecnico(idGrupoTecnico) {
-		document.querySelector('#titleModal').innerHTML = "Actualizar Destinatario";
+	async function fntEditTechnicalGroup(idTechnicalGroup) {
+		document.querySelector('#titleModal').innerHTML = "Actualizar Grupo Tecnico";
 		document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
 		document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
 		document.querySelector('#btnText').innerHTML = "Actualizar";
-		let ajaxUrl = "/grupos/editar/" + idGrupoTecnico;
+		let ajaxUrl = "/technicalGroups/edit/" + idTechnicalGroup;
 		let res = await fetch(ajaxUrl),
 			json = await res.json();
 		if (json) {
-			var formDestinatario = document.getElementById('formGrupoTecnico');
-			const destinatarioId = formDestinatario.setAttribute('action', `grupos/editar/${json.id}`);
+			var formTechnicalGroup = document.getElementById('formTechnicalGroup');
+			const TechnicalGroupId = formTechnicalGroup.setAttribute('action', `technicalGroups/edit/${json.id}`);
 			document.querySelector("#_method").value = "put";
 			document.querySelector("#id").value = json.id;
-			document.querySelector("#codigo").value = json.codigo;
-			document.querySelector("#jefeDeGrupo").value = json.jefeDeGrupo;
-			document.querySelector("#descripcion").value = json.descripcion;
-			document.querySelector("#estado").value = json.estado;
+			document.querySelector("#name").value = json.name;
+			document.querySelector("#groupLeader").value = json.groupLeader;
+			document.querySelector("#description").value = json.description;
+			document.querySelector("#state").value = json.state;
 		}
-		$('#modalFormGrupoTecnico').modal('show');
+		$('#modalFormTechnicalGroup').modal('show');
 	}
 
 	function openModal() {
-		var formDestinatario = document.getElementById('formGrupoTecnico');
-		const destinatarioId = formDestinatario.setAttribute('action', 'grupos/guardar');
+		var formTechnicalGroup = document.getElementById('formTechnicalGroup');
+		const technicalGroupId = formTechnicalGroup.setAttribute('action', 'technicalGroups/save');
 		document.querySelector("#_method").value = "post";
 		document.querySelector("#id").value = "";
-		document.querySelector("#codigo").value = "";
-		document.querySelector("#jefeDeGrupo").value = "";
-		document.querySelector("#descripcion").value = "";
-		document.querySelector("#estado").value = "";
+		document.querySelector("#name").value = "";
+		document.querySelector("#groupLeader").value = "";
+		document.querySelector("#description").value = "";
+		document.querySelector("#state").value = "";
 		document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
 		document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
 		document.querySelector('#btnText').innerHTML = "Guardar";
 		document.querySelector('#titleModal').innerHTML = "Nuevo Grupo Tecnico";
-		$('#modalFormGrupoTecnico').modal('show');
+		$('#modalFormTechnicalGroup').modal('show');
 	}
 </script>
 
