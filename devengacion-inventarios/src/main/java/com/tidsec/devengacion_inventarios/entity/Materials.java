@@ -7,7 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,10 +34,11 @@ public class Materials {
     private String name;
     @NotBlank
     private String type;
-    @NotBlank
-    private String serial1;
-    @NotBlank
-    private String serial2;
+    
+    @ManyToOne
+    @JoinColumn(name = "serialId", referencedColumnName = "id")
+    private String serial;
+    
     @NotNull
     @Column(columnDefinition = "Integer default 1")
 	private int state;
