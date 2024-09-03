@@ -37,7 +37,7 @@ public class Materials {
     
     @ManyToOne
     @JoinColumn(name = "serialId", referencedColumnName = "id")
-    private String serial;
+    private Serial serial;
     
     @NotNull
     @Column(columnDefinition = "Integer default 1")

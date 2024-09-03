@@ -11,8 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -30,33 +29,38 @@ import lombok.ToString;
 @ToString
 @Table(name= "inventory")
 public class Inventory {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	@NotNull
-	private int amount;
-	@NotBlank
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateDownload;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @OneToOne
-    @JoinColumn(name = "technicalGroupId", referencedColumnName = "id")
-    private TechnicalGroup technicalGroup;
-    
-    @ManyToMany
-    @JoinTable(
-      name = "materialInventory",
-      joinColumns = @JoinColumn(name = "inventoryId", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(name = "materialId", referencedColumnName = "id"))
-    private List<Materials> materials;
-    
-    @ManyToMany(mappedBy = "inventories")
-    private List<Accrual> accruals;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
 
-    @OneToMany(mappedBy = "inventory")
-    private List<Operations> operations;
-    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateInstalation;
+    @NotBlank
+    private String cluster;
+    @NotBlank
+    private String proyectId;
+    @NotBlank
+    private String typeInstalation;
+    @NotNull
+    private Integer amount;
     @NotNull
     @Column(columnDefinition = "Integer default 1")
 	private int state;
+
+    @ManyToOne
+    @JoinColumn(name = "usersId", referencedColumnName = "id")
+    private Users users;
+    
+    @ManyToMany
+    private List<Materials> materials;
+
+    @ManyToMany
+    @JoinTable(
+      name = "accrualInventory",
+      joinColumns = @JoinColumn(name = "accrualId", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "inventoryId", referencedColumnName = "id"))
+    private List<Inventory> inventories;
 }
