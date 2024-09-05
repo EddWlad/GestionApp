@@ -53,6 +53,10 @@ public class Accrual {
     @ManyToOne
     @JoinColumn(name = "usersId", referencedColumnName = "id")
     private Users users;
+    
+    @ManyToOne
+    @JoinColumn(name = "series_id", referencedColumnName = "id")
+    private Serial series;
 
     @ManyToMany
     @JoinTable(
