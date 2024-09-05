@@ -40,7 +40,6 @@ public class TechnicalGroupServiceImpl implements ITechnicalGroupService {
 	public TechnicalGroup updateTechnicalGroup(Integer id, TechnicalGroup technicalGroup) {
 		TechnicalGroup technicalGroupDb = technicalGroupRepository.findById(id).orElse(null);
 		if (technicalGroupDb  != null) {
-			technicalGroupDb.setId(technicalGroup.getId());
 			technicalGroupDb.setName(technicalGroup.getName());
 			technicalGroupDb.setDescription(technicalGroup.getDescription());
 			technicalGroupDb.setGroupLeader(technicalGroup.getGroupLeader());

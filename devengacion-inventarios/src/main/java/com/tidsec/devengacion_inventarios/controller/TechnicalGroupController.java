@@ -60,7 +60,11 @@ public class TechnicalGroupController {
 					service.saveTechnicalGroup(technicalGroup);
 					redirectAttributes.addFlashAttribute("message", "GRUPO CREADO CON EXITO");
 				} else if (codeValid != null && codeValid.getState() == 0) {
-					technicalGroup.setState(1);
+					codeValid.setName(technicalGroup.getName());
+					codeValid.setDescription(technicalGroup.getDescription());
+					codeValid.setGroupLeader(technicalGroup.getGroupLeader());
+					//codeValid.setInventory(technicalGroup.getInventory());
+					codeValid.setState(1);
 					service.updateTechnicalGroup(codeValid.getId(), technicalGroup);
 					redirectAttributes.addFlashAttribute("message", "GRUPO CREADO CON EXITO");
 				} else {
