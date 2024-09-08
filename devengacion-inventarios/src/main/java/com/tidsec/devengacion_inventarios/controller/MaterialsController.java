@@ -1,7 +1,9 @@
 package com.tidsec.devengacion_inventarios.controller;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -80,23 +82,37 @@ public class MaterialsController {
 	}
 	
 	@PostMapping("/upload")
-	public ResponseEntity<String> uploadExcel(@RequestParam("file") MultipartFile file) {
-		if (file.isEmpty()) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NO SE HA CARGADO NINGUN ARCHIVO");
+	public ResponseEntity<Map<String, String>> uploadExcel(@RequestParam("file") MultipartFile file) {
+	    Map<String, String> response = new HashMap<>();
+	    
+	    if (file.isEmpty()) {
+	        response.put("success", "false");
+	        response.put("message", "NO SE HA CARGADO NINGUN ARCHIVO");
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	    }
+	    
 	    try {
 	        String contentType = file.getContentType();
-	        if (!contentType.equals("application/vnd.ms-excel") && !contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
-	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("TIPO DE ARCHIVO NO SOPORTADO");
+	        if (!"application/vnd.ms-excel".equals(contentType) && 
+	            !"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(contentType)) {
+	            response.put("success", "false");
+	            response.put("message", "TIPO DE ARCHIVO NO SOPORTADO");
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	        }
+	        
 	        materialsService.uploadMaterialsFromExcel(file);
-	
-	        return ResponseEntity.ok("DATOS CARGADOS EXITOSAMENTE");
+	        
+	        response.put("success", "true");
+	        response.put("message", "DATOS CARGADOS EXITOSAMENTE");
+	        return ResponseEntity.ok(response);
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERROR AL CARGAR LOS DATOS: " + e.getMessage());
+	        response.put("success", "false");
+	        response.put("message", "ERROR AL CARGAR LOS DATOS: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	    }
 	}
+
 	
 	@GetMapping("/edit/{id}")
 	@ResponseBody

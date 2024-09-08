@@ -148,32 +148,38 @@
 	}
 
 	async function uploadExcel() {
-		const formData = new FormData(document.getElementById("formUploadExcel"));
-		const fileInput = document.getElementById("fileInput").files[0];
+	    const formData = new FormData(document.getElementById("formUploadExcel"));
+	    const fileInput = document.getElementById("fileInput").files[0];
 
-		if (!fileInput) {
-			alert("Por favor, selecciona un archivo.");
-			return;
-		}
+	    if (!fileInput) {
+	        alert("Por favor, selecciona un archivo.");
+	        return;
+	    }
 
-		formData.append("file", fileInput);
+	    formData.append("file", fileInput);
 
-		try {
-			let res = await fetch('/materials/upload', {
-				method: 'POST',
-				body: formData
-			});
-			let json = await res.json();
-			if (json.success) {
-				alert('Archivo cargado exitosamente.');
-				location.reload();
-			} else {
-				alert('Error al cargar el archivo.');
-			}
-		} catch (error) {
-			console.error('Error:', error);
-			alert('Error al cargar el archivo.');
-		}
+	    try {
+	        let res = await fetch('/materials/upload', {
+	            method: 'POST',
+	            body: formData
+	        });
+
+	        console.log('Response Status:', res.status); // Verifica el código de estado
+	        console.log('Response Headers:', res.headers); // Verifica los encabezados
+
+	        let json = await res.json();
+	        console.log('Response Body:', json); // Verifica el cuerpo de la respuesta
+
+	        if (res.ok && json.success) {
+	            alert('Archivo cargado exitosamente.');
+	            location.reload();
+	        } else {
+	            alert('Error al cargar el archivo.');
+	        }
+	    } catch (error) {
+	        console.error('Error:', error);
+	        alert('Error al cargar el archivo.');
+	    }
 	}
 </script>
 
