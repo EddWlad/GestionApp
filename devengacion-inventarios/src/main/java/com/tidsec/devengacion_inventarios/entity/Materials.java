@@ -33,17 +33,13 @@ public class Materials {
     private String name;
     @NotBlank
     private String type;
-    @NotBlank
-    private String serial1;
-    @NotBlank
-    private String serial2;
     @NotNull
     @Column(columnDefinition = "Integer default 1")
 	private int state;
     
-    @OneToMany(mappedBy = "material")
-    private List<Serial> series;
+    @OneToMany(mappedBy = "materials")
+    private List<Serial> serial;
 
     @ManyToMany(mappedBy = "materials")
-    private List<Inventory> inventories;
+    private List<Inventory> inventory;
 }

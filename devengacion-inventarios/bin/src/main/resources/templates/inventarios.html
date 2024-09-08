@@ -1,0 +1,239 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+
+<div>
+    <main class="app-content">
+        <div class="app-title">
+            <div>
+                <ul class="app-breadcrumb breadcrumb">
+                    <li class="breadcrumb-item">
+                        <h1><i class="fa fa-archive"></i> Inventario</h1>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <button type="button" title="Agregar" class="btn btn-outline-primary"
+                                onclick="cargarModal()">Agregar</button></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <div class="tile-body">
+                        <div th:if="${message != null}"
+                             class="alert alert-success alert-dismissible fade show text-center message">
+                            [[${message}]]</div>
+                        <div th:if="${errorMessage != null}"
+                             class="alert alert-danger alert-dismissible fade show text-center">
+                            [[${errorMessage}]]
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered" id="sampleTable">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>GRUPO TECNICO</th>
+                                    <th>FECHA DE CARGA</th>
+                                    <th>ESTADO</th>
+                                    <th class="col-2">ACCIONES</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="inventario : ${listarInventarios}">
+                                    <td>[[${inventario.id}]]</td>
+                                    <td>[[${inventario.grupoTecnico.codigo}]]</td>
+                                    <td>[[${inventario.fechaCarga}]]</td>
+                                    <td>
+                                        <span th:if="${inventario.estado == 1}">
+                                            <span class="badge badge-success">Activo</span>
+                                        </span>
+                                        <span th:if="${inventario.estado == 0}">
+                                            <span class="badge badge-danger">Inactivo</span>
+                                        </span>
+                                    </td>
+                                    <td class="col-2">
+                                        <button type="button"
+                                                th:onclick="'javascript:verInventario(' + ${inventario.id} + ')'"
+                                                title="Ver" class="fa fa-eye btn btn-info" style="color: white;"></button>
+                                        <button type="button"
+                                                th:onclick="'javascript:editarInventario(' + ${inventario.id} + ')'"
+                                                title="Editar" class="fa-regular fa fa-pencil btn btn-primary"
+                                                style="color: white;"></button>
+                                        <button type="button"
+                                                th:onclick="'javascript:eliminarInventario(' + ${inventario.id} + ')'"
+                                                title="Eliminar" id="btnDelete"
+                                                class="fa-regular fa fa-trash btn btn-danger"
+                                                style="color: white;"></button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    window.verInventario = function(id) {
+        fetch(`/inventarios/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                poblarModal(data, false); // false indica modo vista
+                $('#modalFormInventario').modal('show');
+            })
+            .catch(error => console.error('Error al obtener el inventario:', error));
+    };
+
+    window.editarInventario = function(id) {
+        fetch(`/inventarios/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                poblarModal(data, true); // true indica modo edición
+                $('#modalFormInventario').modal('show');
+            })
+            .catch(error => console.error('Error al obtener el inventario:', error));
+    };
+
+    window.eliminarInventario = function(id) {
+        if (confirm("¿Estás seguro de que deseas eliminar este inventario?")) {
+            fetch(`/inventarios/eliminar/${id}`, { method: 'DELETE' })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Inventario eliminado con éxito");
+                        location.reload();
+                    } else {
+                        throw new Error('Error al eliminar el inventario.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    };
+
+    function poblarModal(data, esEditable) {
+        document.getElementById('fechaCarga').value = data.fechaCarga;
+        document.getElementById('grupoTecnico').value = data.grupoTecnico;
+        document.getElementById('estado').value = data.estado;
+
+        const tableBody = document.getElementById('materialesTableBody');
+        tableBody.innerHTML = '';
+
+        data.materiales.forEach(material => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="id">${material.id}</td>
+                <td class="nombre">${material.nombre}</td>
+                <td class="tipo">${material.tipo}</td>
+                <td class="cantidad">${material.cantidad}</td>
+                <td class="serie1">${material.serie1}</td>
+                <td class="serie2">${material.serie2}</td>
+                <td>
+                    ${esEditable ? `
+                        <button type="button" class="btn btn-warning btn-sm text-white" onclick="editarMaterial(this)">Editar</button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarMaterial(this)">Eliminar</button>
+                    ` : ''}
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        document.querySelectorAll('#modalFormInventario input, #modalFormInventario select').forEach(input => {
+            input.disabled = !esEditable;
+        });
+    }
+
+    function cargarModal() {
+        var formInventario = document.getElementById('formInventario');
+        formInventario.setAttribute('action', 'inventarios/agregar');
+        limpiarFormulario();
+        document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+        document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+        document.querySelector('#btnText').innerHTML = "Guardar";
+        document.querySelector('#titleModal').innerHTML = "Nuevo Inventario";
+        document.getElementById('estado').value = "1";
+        
+        const fechaCarga = document.getElementById('fechaCarga');
+        const today = new Date().toISOString().split('T')[0];
+        fechaCarga.value = today;
+
+        $('#modalFormInventario').modal('show');
+    }
+
+    function limpiarFormulario() {
+        document.querySelector("#idInventario").value = "";
+        document.querySelector("#grupoTecnico").value = "";
+        document.querySelector("#material").value = "";
+        document.querySelector("#tipo").value = "";
+        document.querySelector("#serie1").value = "";
+        document.querySelector("#serie2").value = "";
+        document.querySelector("#cantidad").value = "";
+    }
+
+    function cargarGruposTecnicos() {
+        fetch('/inventarios/grupos')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.querySelector('#grupoTecnico');
+                select.innerHTML = '<option value="">Seleccione una grupo tecnico</option>';
+                data.forEach(grupoTecnico => {
+                    const option = document.createElement('option');
+                    option.value = grupoTecnico.id;
+                    option.textContent = grupoTecnico.codigo;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar grupo:', error));
+    }
+
+    function cargarMateriales() {
+        fetch('/inventarios/materiales')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.querySelector('#material');
+                select.innerHTML = '<option value="">Seleccione el material</option>';
+                data.forEach(material => {
+                    const option = document.createElement('option');
+                    option.value = material.id;
+                    option.textContent = material.nombre;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar material:', error));
+    }
+
+    function cargarTipoMaterial(materialId) {
+        if (!materialId) return;
+
+        fetch(`/inventarios/materiales/${materialId}`)
+            .then(response => response.json())
+            .then(material => {
+                document.getElementById('tipo').value = material.tipo || '';
+                document.getElementById('codigo').value = material.codigo || '';
+                toggleSeriesFields();
+            })
+            .catch(error => console.error('Error al cargar detalles de material', error));
+    }
+
+    function toggleSeriesFields() {
+        var seriesFields = document.getElementById('seriesFields');
+        var tipo = document.getElementById('tipo').value;
+
+        if (tipo === 'activo') {
+            seriesFields.style.display = 'block';
+        } else {
+            seriesFields.style.display = 'none';
+        }
+    }
+
+    cargarGruposTecnicos();
+    cargarMateriales();
+});
+
+</script>
+
+<div th:replace="fragments/cargar_inventario_form"></div>
+<div th:replace="fragments/inventarios_form"></div>
+<div th:replace="fragments/footer"></div>

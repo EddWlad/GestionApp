@@ -1,0 +1,209 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+
+<div>
+	<main class="app-content">
+		<div class="app-title">
+			<div>
+				<ul class="app-breadcrumb breadcrumb">
+					<li class="breadcrumb-item">
+						<h1><i class="fa fa-line-chart"></i> Devengaciones</h1>
+					</li>
+					<li class="breadcrumb-item">
+						<button type="button" title="Agregar" class="btn btn-outline-primary" data-toggle="modal"
+							data-target="#modalFormDevengacion">Agregar</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tile">
+					<div class="tile-body">
+						<div th:if="${message != null}"
+							class="alert alert-success alert-dismissible fade show text-center message">
+							[[${message}]]</div>
+						<div th:if="${errorMessage != null}"
+							class="alert alert-danger alert-dismissible fade show text-center">
+							[[${errorMessage}]]
+						</div>
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered" id="sampleTable">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>FECHA</th>
+										<th>COD. PROYECTO</th>
+										<th>CLUSTER</th>
+										<th>TIPO DE ACTIVIDAD</th>
+										<th>GRUPO TECNICO</th>
+										<th>FECHA ACTIVIDAD</th>
+										<th>MATERIAL</th>
+										<th>SERIE</th>
+										<th>CANTIDAD</th>
+										<th>ESTADO</th>
+										<th class="col-2">ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="devengacion : ${listarDevengaciones}">
+										<td>[[${devengacion.id}]]</td>
+										<td>[[${devengacion.fechaDevengacion}]]</td>
+										<td>[[${devengacion.cluster}]]</td>
+										<td>[[${devengacion.tipoInstalacion}]]</td>
+										<td>[[${devengacion.inventario.grupoTecnico}]]</td>
+										<td>[[${devengacion.fechaInstalacion}]]</td>
+										<td>[[${devengacion.inventario.material.nombre}]]</td>
+										<td>[[${devengacion.inventario.materialActivo.serie1}]]</td>
+										<td>[[${devengacion.cantidad}]]</td>
+										<td>
+											<span th:if="${material.estado == 1}">
+												<span class="badge badge-success">Activo</span>
+											</span>
+											<span th:if="${material.estado == 2}">
+												<span class="badge badge-danger">Inactivo</span>
+											</span>
+										</td>
+										<td class="col-2">
+											<button type="button" th:data-id="${devengacion.id}" title="Editar"
+												class="fa-regular fa fa-pencil btn btn-primary btn-edit"
+												style="color: white;" data-toggle="modal"
+												data-target="#modalFormDevengacion"></button>
+											<form th:action="@{'/devengaciones/eliminar/' + ${devengacion.id}}" method="post"
+												style="display:inline;">
+												<input type="hidden" name="_method" value="delete" />
+												<button type="submit" title="Eliminar"
+													class="fa-regular fa fa-trash btn btn-danger"
+													style="color: white;"></button>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script th:inline="javascript">
+	window.addEventListener(
+		"load",
+		function () {
+			cargarGruposTecnicos();
+		},
+		false
+	);
+
+	async function fntEliminarDevengacion(idDevengacion) {
+		swal({
+			title: "Eliminar Devengación",
+			text: "¿Realmente quiere eliminar la devengación?",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Si, eliminar!",
+			cancelButtonText: "No, cancelar!",
+			closeOnConfirm: false,
+			closeOnCancel: true
+		}, async function (isConfirm) {
+
+			if (isConfirm) {
+				let res = await fetch(`/devengaciones/eliminar/${idDevengacion}`, {
+					method: 'DELETE'
+				}),
+					json = await res.json();
+				if (json) {
+					swal("Eliminar!", "Devengación eliminada correctamente.", "success");
+					location.reload();
+				} else {
+					swal("Atención!", "No se pudo eliminar la devengación.", "error");
+				}
+			}
+
+		});
+	}
+
+	async function fntEditarDevengacion(idDevengacion) {
+		document.querySelector('#titleModal').innerHTML = "Actualizar Devengación";
+		document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+		document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+		document.querySelector('#btnText').innerHTML = "Actualizar";
+		limpiarFormulario();
+		let ajaxUrl = "devengacion/editar/" + idDevengacion;
+		let res = await fetch(ajaxUrl),
+			json = await res.json();
+		if (json) {
+			var formDevengacion = document.getElementById('formDevengacion');
+			formDevengacion.setAttribute('action', `/devengacion/editar/${json.id}`);
+			document.querySelector("#_method").value = "put";
+			document.querySelector("#idDevengacion").value = json.id;
+			document.querySelector("#proyectoId").value = json.proyectoId;
+			document.querySelector("#cluster").value = json.cluster;
+			document.querySelector("#tipoInstalacion").value = json.tipoInstalacion;
+			document.querySelector("#grupoTecnico").value = json.inventario.grupoTecnico.id;
+			document.querySelector("#estado").value = json.estado;
+			cargarGruposTecnicos();
+			cargarMateriales();
+		}
+		$('#modalFormDevengacion').modal('show');
+	}
+
+	function cargarGruposTecnicos() {
+		fetch('/devengaciones/grupos')
+			.then(response => response.json())
+			.then(data => {
+				const select = document.querySelector('#gruposTecnicos');
+				select.innerHTML = '<option value="">Seleccione un grupo tecnico</option>';
+				data.forEach(grupos => {
+					const option = document.createElement('option');
+					option.value = grupos.id;
+					option.textContent = grupos.codigo;
+					select.appendChild(option);
+				});
+			})
+			.catch(error => console.error('Error al cargar grupos tecnicos:', error));
+	}
+
+	function cargarModal() {
+		var formDevengacion = document.getElementById('formDevengacion');
+		const devengacionId = formDevengacion.setAttribute('action', 'devengaciones/guardar');
+		limpiarFormulario();
+		document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+		document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+		document.querySelector('#btnText').innerHTML = "Guardar";
+		document.querySelector('#titleModal').innerHTML = "Nueva Devengación";
+
+		$('#modalFormDevengacion').modal('show');
+	}
+
+	function limpiarFormulario() {
+		document.querySelector("#idDevengacion").value = "";
+		document.querySelector("#proyectoId").value = "";
+		document.querySelector("#cluster").value = "";
+		document.querySelector("#tipoInstalacion").value = "";
+		document.querySelector("#grupoTecnico").value = "";
+		document.querySelector("#estado").value = "";
+		// Limpiar contenedor de materiales
+		document.querySelector("#materialesContainer").innerHTML = "";
+	}
+	
+	function toggleMateriales() {
+		var x = document.getElementById("materiales");
+		if (x.style.display === "none") {
+			x.style.display = "block";  // Mostrar
+		} else {
+			x.style.display = "none";   // Ocultar
+			//document.getElementById('destinatario2').value = '';
+			document.getElementById('codigo').value = '';
+			document.getElementById('nombre').value = '';
+			document.getElementById('serie').value = '';
+			document.getElementById('cantidad').value = '';
+		}
+	}
+
+</script>
+
+<div th:replace="fragments/devengaciones_form"></div>
+<div th:replace="fragments/footer"></div>

@@ -1,0 +1,73 @@
+<div class="modal fade" id="modalFormMateriales" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header headerRegister">
+				<h5 class="modal-title" id="titleModal">[[${material.id != null} ? 'Editar Grupo' : 'Nuevo Grupo']]</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="tile">
+					<div class="tile-body">
+						<form th:method="post" id="formMaterial"
+							th:action="@{${material.id} == null ? '/materiales/agregar' : '/materiales/editar/' + ${material.id}}"
+							th:object="${material}">
+							<input type="hidden" id="id" name="id" th:value="*{id}">
+							<input type="hidden" id="_method" name="_method" value="post" />
+							<div class="form-group">
+								<label for="codigo">CODIGO</label>
+								<input class="form-control" id="codigo" name="codigo" type="text"
+									placeholder="Codigo de grupo" th:field="*{codigo}">
+							</div>
+							<div class="form-group">
+								<label for="nombre">NOMBRE</label>
+								<input class="form-control" id="nombre" name="nombre" type="text"
+									placeholder="Nombre del material" th:field="*{nombre}">
+							</div>
+							<div class="form-group">
+								<label for="tipo">TIPO</label>
+								<select class="form-control" id="tipo" name="tipo" th:field="*{tipo}" required>
+									<option value="pasivo">PASIVO</option>
+									<option value="activo">ACTIVO</option>
+								</select>
+							</div>
+							<!--<div class="form-group" id="seriesFields" style="display: none;">
+								<label for="serie1">SERIE 1</label>
+								<input type="text" class="form-control" id="serie1" name="serie1">
+								<label for="serie2">SERIE 2</label>
+								<input type="text" class="form-control" id="serie2" name="serie2">
+							</div>-->
+							<div class="form-group">
+								<label for="estado">Estado</label>
+								<select class="form-control" id="estado" name="estado" th:field="*{estado}">
+									<option value="1">ACTIVO</option>
+									<option value="2">INACTIVO</option>
+								</select>
+							</div>
+							<div class="tile-footer">
+								<button id="btnActionForm" class="btn btn-primary" type="submit">
+									<i class="fa fa-fw fa-lg fa-check-circle"></i>
+									<span id="btnText">[[${material.id != null} ? 'Actualizar' : 'Guardar']]</span>
+								</button>&nbsp;&nbsp;&nbsp;
+								<a class="btn btn-secondary" href="#" data-dismiss="modal">
+									<i class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--<script>
+	document.getElementById('tipo').addEventListener('change', function () {
+		var seriesFields = document.getElementById('seriesFields');
+		if (this.value === 'activo') {
+			seriesFields.style.display = 'block';
+		} else {
+			seriesFields.style.display = 'none';
+		}
+	});
+</script>-->

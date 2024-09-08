@@ -1,0 +1,141 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+
+<div>
+	<main class="app-content">
+		<div class="app-title">
+			<div>
+				<ul class="app-breadcrumb breadcrumb">
+					<li class="breadcrumb-item">
+						<h1><i class="fa fa-users"></i> Grupos Tecnicos
+							<button class="btn btn-outline-primary ml-1" onClick="openModal();" type="button"><i
+									class="fa fa-plus-circle"></i> Nuevo</button>
+						</h1>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tile">
+					<div class="tile-body">
+						<div th:if="${message != null}"
+							class="alert alert-success alert-dismissible fade show text-center message">
+							[[${message}]]</div>
+						<div th:if="${errorMessage != null}"
+							class="alert alert-danger alert-dismissible fade show text-center">
+							[[${errorMessage}]]
+						</div>
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered" id="sampleTable">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>NOMBRE</th>
+										<th>JEFE DE GRUPO</th>
+										<th>DESCRIPCION</th>
+										<th>ESTADO</th>
+										<th class="col-2">ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="technicalGroup : ${listTechnicalGroup}">
+										<td>[[${technicalGroup.id}]]</td>
+										<td>[[${technicalGroup.name}]]</td>
+										<td>[[${technicalGroup.groupLeader}]]</td>
+										<td>[[${technicalGroup.description}]]</td>
+										<td>
+											<span th:if="${technicalGroup.state == 1}">
+												<span class="badge badge-success">Activo</span>
+											</span>
+											<span th:if="${technicalGroup.state == 2}">
+												<span class="badge badge-danger">Inactivo</span>
+											</span>
+										</td>
+										<td class="form-group col-md-2">
+											<button class="btn btn-primary  btn-sm btnEditRol"
+												th:onclick="'javascript:fntEditTechnicalGroup(' + ${technicalGroup.id} + ')'"
+												title="Editar Grupo Tecnico"><i class="fa fa-pencil"></i></button>
+											<button class="btn btn-danger btn-sm btnDelRol"
+												th:onclick="'javascript:fntDeleteTechnicalGroup(' + ${technicalGroup.id} + ')'"
+												title="Eliminar Grupo Tecnico"><i class="fa fa-trash"></i></button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script th:inline="javascript">
+	async function fntDeleteTechnicalGroup(idTechnicalGroup) {
+		swal({
+			title: "Eliminar Grupo Tecnico",
+			text: "¿Realmente quiere eliminar este grupo tecnico?",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Si, eliminar!",
+			cancelButtonText: "No, cancelar!",
+			closeOnConfirm: false,
+			closeOnCancel: true
+		}, async function (isConfirm) {
+
+			if (isConfirm) {
+				let res = await fetch(`/technicalGroups/delete/${idTechnicalGroup}`, {
+					method: 'DELETE'
+				}),
+					json = await res.json();
+				if (json) {
+					swal("Eliminar!", "Grupo tecnico eliminado correctamente.", "success");
+					location.reload();
+				} else {
+					swal("Atención!", "No se pudo eliminar el grupo tecnico.", "error");
+				}
+			}
+
+		});
+	}
+	async function fntEditTechnicalGroup(idTechnicalGroup) {
+		document.querySelector('#titleModal').innerHTML = "Actualizar Grupo Tecnico";
+		document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+		document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+		document.querySelector('#btnText').innerHTML = "Actualizar";
+		let ajaxUrl = "/technicalGroups/edit/" + idTechnicalGroup;
+		let res = await fetch(ajaxUrl),
+			json = await res.json();
+		if (json) {
+			var formTechnicalGroup = document.getElementById('formTechnicalGroup');
+			const TechnicalGroupId = formTechnicalGroup.setAttribute('action', `technicalGroups/edit/${json.id}`);
+			document.querySelector("#_method").value = "put";
+			document.querySelector("#id").value = json.id;
+			document.querySelector("#name").value = json.name;
+			document.querySelector("#groupLeader").value = json.groupLeader;
+			document.querySelector("#description").value = json.description;
+			document.querySelector("#state").value = json.state;
+		}
+		$('#modalFormTechnicalGroup').modal('show');
+	}
+
+	function openModal() {
+		var formTechnicalGroup = document.getElementById('formTechnicalGroup');
+		const technicalGroupId = formTechnicalGroup.setAttribute('action', 'technicalGroups/save');
+		document.querySelector("#_method").value = "post";
+		document.querySelector("#id").value = "";
+		document.querySelector("#name").value = "";
+		document.querySelector("#groupLeader").value = "";
+		document.querySelector("#description").value = "";
+		document.querySelector("#state").value = "";
+		document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+		document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+		document.querySelector('#btnText').innerHTML = "Guardar";
+		document.querySelector('#titleModal').innerHTML = "Nuevo Grupo Tecnico";
+		$('#modalFormTechnicalGroup').modal('show');
+	}
+</script>
+
+<div th:replace="fragments/form_TechnicalGroup"></div>
+<div th:replace="fragments/footer"></div>

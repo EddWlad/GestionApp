@@ -1,0 +1,56 @@
+<div class="modal fade" id="modalFormMaterials" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header headerRegister">
+                <h5 class="modal-title" id="titleModal">[[${materials.id != null} ? 'Editar Material' : 'Nuevo Material']]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tile">
+                    <div class="tile-body">
+                        <form th:method="post" id="formMaterials"
+                              th:action="@{${materials.id} == null ? '/materials/save' : '/materials/edit/' + ${materials.id}}"
+                              th:object="${materials}">
+                            <input type="hidden" id="id" name="id" th:value="*{id}">
+                            <input type="hidden" id="_method" name="_method" value="post" />
+                            <div class="form-group">
+                                <label for="codigo">CODIGO</label>
+                                <input class="form-control" id="code" name="code" type="text"
+                                       placeholder="Código del material" th:field="*{code}">
+                            </div>
+                            <div class="form-group">
+                                <label for="nombre">NOMBRE</label>
+                                <input class="form-control" id="name" name="name" type="text"
+                                       placeholder="Nombre del material" th:field="*{name}">
+                            </div>
+                            <div class="form-group">
+                                <label for="tipo">TIPO</label>
+                                <select class="form-control" id="type" name="type" th:field="*{type}" required>
+                                    <option value="pasivo">PASIVO</option>
+                                    <option value="activo">ACTIVO</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="estado">Estado</label>
+                                <select class="form-control" id="state" name="state" th:field="*{state}">
+                                    <option value="1">ACTIVO</option>
+                                    <option value="2">INACTIVO</option>
+                                </select>
+                            </div>
+                            <div class="tile-footer">
+                                <button id="btnActionForm" class="btn btn-primary" type="submit">
+                                    <i class="fa fa-fw fa-lg fa-check-circle"></i>
+                                    <span id="btnText">[[${materials.id != null} ? 'Actualizar' : 'Guardar']]</span>
+                                </button>&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-secondary" href="#" data-dismiss="modal">
+                                    <i class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="modal fade" id="modalUploadExcel" tabindex="-1" role="dialog" aria-labelledby="modalUploadExcelLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalUploadExcelLabel">Cargar Archivo Excel</h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<!-- Formulario para cargar el archivo Excel -->
+				<form id="formUploadExcel" enctype="multipart/form-data">
+					<div class="mb-3">
+						<label for="fileInput" class="form-label">Seleccionar archivo Excel</label>
+						<input type="file" class="form-control" id="fileInput" accept=".xls, .xlsx" required>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-primary" onclick="uploadExcel()">Subir</button>
+			</div>
+		</div>
+	</div>
+</div>

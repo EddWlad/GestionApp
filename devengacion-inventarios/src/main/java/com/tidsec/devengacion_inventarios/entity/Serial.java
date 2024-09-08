@@ -31,8 +31,8 @@ public class Serial {
     @Column(nullable = true)
     private String serialNumber2;
     @ManyToOne
-    @JoinColumn(name = "material_id", referencedColumnName = "id", nullable = false)
-    private Materials material;
+    @JoinColumn(name = "materials_id", referencedColumnName = "id", nullable = false)
+    private Materials materials;
 
     @ManyToOne
     @JoinColumn(name = "inventory_id", referencedColumnName = "id", nullable = false)
