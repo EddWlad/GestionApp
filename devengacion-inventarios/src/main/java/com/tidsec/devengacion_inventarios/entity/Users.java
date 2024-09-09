@@ -29,15 +29,21 @@ public class Users {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+
 	@NotBlank
 	private String name;
+
 	@NotBlank
 	private String lastName;
+
 	@NotBlank
 	private String email;
-	private int phone;
+	
+	private String phone;
+
 	@NotBlank
 	private String password;
+
     @ManyToOne
     @JoinColumn(name = "rolId", referencedColumnName = "id")
     private Role role;
@@ -48,8 +54,9 @@ public class Users {
     @OneToMany(mappedBy = "users")
     private List<Accrual> accruals;
     @NotNull
+
     @Column(columnDefinition = "Integer default 1")
-	private int state;
+	private int status;
 	
 
 }
