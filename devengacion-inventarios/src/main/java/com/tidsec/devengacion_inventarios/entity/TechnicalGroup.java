@@ -1,10 +1,14 @@
 package com.tidsec.devengacion_inventarios.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -40,4 +44,11 @@ public class TechnicalGroup {
 
     @OneToOne(mappedBy = "technicalGroup")
     private Inventory inventory;
+    
+    @OneToMany(mappedBy = "groupOrigin")
+    private List<Transfer> originatedTransfers;
+
+    @OneToMany(mappedBy = "groupDestinity")
+    private List<Transfer> receivedTransfers;
+
 }

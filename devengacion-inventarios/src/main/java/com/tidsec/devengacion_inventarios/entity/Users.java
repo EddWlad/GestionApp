@@ -47,6 +47,10 @@ public class Users {
 
     @OneToMany(mappedBy = "users")
     private List<Accrual> accruals;
+    
+    @OneToMany(mappedBy = "users")
+    private List<Transfer> transfers;
+    
     @NotNull
     @Column(columnDefinition = "Integer default 1")
 	private int state;
