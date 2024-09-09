@@ -29,13 +29,17 @@ public class Users {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+
 	@NotBlank
 	private String name;
+
 	@NotBlank
 	private String lastName;
+
 	@NotBlank
 	private String email;
-	private int phone;
+	
+	private String phone;
 
 	@NotBlank
 	private String password;
