@@ -36,8 +36,10 @@ public class Users {
 	@NotBlank
 	private String email;
 	private int phone;
+
 	@NotBlank
 	private String password;
+
     @ManyToOne
     @JoinColumn(name = "rolId", referencedColumnName = "id")
     private Role role;
@@ -48,8 +50,9 @@ public class Users {
     @OneToMany(mappedBy = "users")
     private List<Accrual> accruals;
     @NotNull
+
     @Column(columnDefinition = "Integer default 1")
-	private int state;
+	private int status;
 	
 
 }

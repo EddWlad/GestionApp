@@ -1,0 +1,234 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+<div>
+	<main class="app-content">
+		<div class="app-title">
+			<div>
+				<h1>
+					<i class="fas fa-user-tag"></i> Usuarios
+					<button class="btn btn-primary" onClick="openModal();"
+						type="button">
+						<i class="fa fa-plus-circle"></i> Nuevo
+					</button>
+				</h1>
+			</div>
+			<ul class="app-breadcrumb breadcrumb">
+				<li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+				<li class="breadcrumb-item"><a href="#">Roles</a></li>
+			</ul>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tile">
+					<div class="tile-body">
+					<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message">
+						[[${message}]]</div>
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered"
+								id="tableUsuarios">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Nombre</th>
+										<th>Apellido</th>
+										<th>Correo electrónico</th>
+										<th>Estado</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="usuario : ${usuarios}">
+										<td>[[${usuario.id}]]</td>
+										<td>[[${usuario.nombre}]]</td>
+										<td>[[${usuario.apellido}]]</td>
+										<td>[[${usuario.correoElectronico}]]</td>
+										<td><span th:if="${usuario.estado == 1}"> <span
+												class="badge badge-success">Activo</span>
+										</span> <span th:if="${usuario.estado == 2}"> <span
+												class="badge badge-danger">Inactivo</span>
+										</span></td>
+										<td class="form-group col-md-2">
+											<button class="btn btn-primary  btn-sm btnEditRol"
+												th:onclick="'javascript:fntEditarUsuario(' + ${usuario.id} + ')'"
+												title="Editar rol">
+												<i class="fa fa-pencil"></i>
+											</button>
+											<button class="btn btn-danger btn-sm btnDelRol"
+												th:onclick="'javascript:fntEliminarUsuario(' + ${usuario.id} + ')'"
+												title="Eliminar rol">
+												<i class="fa fa-trash"></i>
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script th:inline="javascript">
+
+	function activarBoton() {
+		const nombreInput = document.getElementById('nombre');
+		const apellidoInput = document.getElementById('apellido');
+		const identificacionInput = document.getElementById('identificacion');
+		const correoInput = document.getElementById('correoElectronico');
+		const contrasenaInput = document.getElementById('contrasena');
+		const confirmarContrasenaInput = document.getElementById('confirmarContrasena');
+		const estadoInput = document.getElementById('estado');
+		const rolInput = document.getElementById('roles');
+		const btnEnviar = document.getElementById('btnActionForm');
+		btnEnviar.disabled = true;
+		nombreInput.value = "";
+		apellidoInput.value = "";
+		identificacionInput.value = "";
+		correoInput.value = "";
+		contrasenaInput.value = "";
+		confirmarContrasenaInput.value = "";
+		estadoInput.value = "";
+		rolInput.value="";
+
+		let validoNombre = false;
+		let validoApellido = false;
+		let validoIdentificacion = false;
+		let validoCorreo = false;
+		let validoContrasena = false;
+		let validoConfirmarContrasena = false;
+		let validoEstado = false;
+		let validoRol = false;
+
+		function validarFormulario(e) {
+			const nombre = nombreInput.value.trim();
+			const apellido = apellidoInput.value.trim();
+			const identificacion = identificacionInput.value.trim();
+			const correo = correoInput.value.trim();
+			const contrasena = contrasenaInput.value.trim();
+			const confirmarContrasena = confirmarContrasenaInput.value.trim();
+			const estado = estadoInput.value.trim();
+			const rol = rolInput.value.trim();
+
+			validoNombre = nombre !== '';
+			validoApellido = apellido !== '';
+			validoIdentificacion = identificacion !== '';
+			validoCorreo = correo.includes('@') && correo.includes('.');
+			validoContrasena = contrasena.length >= 8;
+			validoConfirmarContrasena = confirmarContrasena === contrasena;
+			validoEstado = estado !== '';
+			validoRol = rol !== '';
+			if (!validoConfirmarContrasena || !validoContrasena) {
+				contrasenaInput.classList.add('is-invalid', 'border-danger');
+				confirmarContrasenaInput.classList.add('is-invalid', 'border-danger');
+			} else {
+				contrasenaInput.classList.remove('is-invalid', 'border-danger');
+				confirmarContrasenaInput.classList.remove('is-invalid', 'border-danger');
+			}
+
+			if (validoNombre) {
+				nombreInput.classList.remove('error');
+			} else {
+				nombreInput.classList.add('error');
+			}
+
+
+			if (
+				validoNombre &&
+				validoApellido &&
+				validoIdentificacion &&
+				validoCorreo &&
+				validoContrasena &&
+				validoConfirmarContrasena &&
+				validoEstado &&
+				validoRol
+			) {
+				btnEnviar.disabled = false;
+			} else {
+				btnEnviar.disabled = true;
+			}
+		}
+		nombreInput.addEventListener('input', validarFormulario);
+		apellidoInput.addEventListener('input', validarFormulario);
+		identificacionInput.addEventListener('input', validarFormulario);
+		correoInput.addEventListener('input', validarFormulario);
+		contrasenaInput.addEventListener('input', validarFormulario);
+		estadoInput.addEventListener('change', validarFormulario);
+		rolInput.addEventListener('change', validarFormulario);
+		confirmarContrasenaInput.addEventListener('input', validarFormulario);
+	}
+
+	async function fntEliminarUsuario(idUsuario) {
+		swal({
+			title: "Eliminar Usuario",
+			text: "¿Realmente quiere eliminar el Usuario?",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Si, eliminar!",
+			cancelButtonText: "No, cancelar!",
+			closeOnConfirm: false,
+			closeOnCancel: true
+		}, async function (isConfirm) {
+
+			if (isConfirm) {
+				let res = await fetch(`/usuarios/eliminar/${idUsuario}`, {
+				    method: 'DELETE'
+				}),
+					json = await res.json();
+				if (json) {
+					swal("Eliminar!", "Usuario eliminado correctamente.", "success");
+					location.reload(); 
+				} else {
+					swal("Atención!", "No se pudo eliminar el usuario.", "error");
+				}
+			}
+
+		});
+	}
+	async function fntEditarUsuario(idUsuario) {
+		activarBoton();
+		document.querySelector('#titleModal').innerHTML = "Actualizar Usuario";
+		document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+		document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+		document.querySelector('#btnText').innerHTML = "Actualizar";
+		let ajaxUrl = "usuarios/editar/" + idUsuario;
+		try {
+			const res = await fetch(ajaxUrl);
+			const json = await res.json();
+			if (json) {
+				const formUser = document.getElementById('formId');
+				const rolId = formUser.setAttribute('action', `usuarios/editar/${json.id}`);
+				document.querySelector("#_method").value = "put";
+				document.querySelector("#id").value = json.id;
+				document.querySelector("#nombre").value = json.nombre;
+				document.querySelector("#apellido").value = json.apellido;
+				document.querySelector("#identificacion").value = json.identificacion;
+				document.querySelector("#correoElectronico").value = json.correoElectronico;
+				 if(json.estado == 1){
+		            document.querySelector("#estado").value = 1;
+		        }else{
+		        	document.querySelector("#estado").value = 2;
+		        }
+				document.querySelector("#roles").value = json.roles.id;
+			}
+			$('#modalFormUsuario').modal('show');
+		} catch (error) {
+			console.error("Error fetching or parsing JSON:", error);
+		}
+	}
+	function openModal() {
+		var formUser = document.getElementById('formId');
+		formUser.setAttribute('action', 'usuarios/guardar');
+		document.querySelector("#id").value = "";
+		document.querySelector("#_method").value = "post";
+		document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+		document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+		document.querySelector('#btnText').innerHTML = "Guardar";
+		document.querySelector('#titleModal').innerHTML = "Nuevo Usuario";
+		$('#modalFormUsuario').modal('show');
+		activarBoton();
+	}
+</script>
+<div th:replace="fragments/usuarios_form"></div>
+<div th:replace="fragments/footer"></div>

@@ -1,0 +1,266 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+<div>
+	<main class="app-content">
+		<div class="app-title">
+			<div>
+				<h1>
+					<i class="fas fa-user-tag"></i> Roles
+					<button class="btn btn-primary" onClick="openModal();"
+						type="button">
+						<i class="fa fa-plus-circle"></i> Nuevo
+					</button>
+				</h1>
+			</div>
+			<ul class="app-breadcrumb breadcrumb">
+				<li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+				<li class="breadcrumb-item"><a href="#">Roles</a></li>
+			</ul>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tile">
+					<div class="tile-body">
+					<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message">
+						[[${message}]]</div>
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered" id="tableRoles">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Nombre</th>
+										<th>Descripción</th>
+										<th>Estado</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="rol : ${roles}">
+										<td>[[${rol.id}]]</td>
+										<td>[[${rol.nombre}]]</td>
+										<td>[[${rol.descripcion}]]</td>
+										<td><span th:if="${rol.estado == 1}"> <span
+												class="badge badge-success">Activo</span>
+										</span> <span th:if="${rol.estado == 2}"> <span
+												class="badge badge-danger">Inactivo</span>
+										</span></td>
+										<td class="form-group col-md-2">
+											<button class="btn btn-primary  btn-sm btnPermisosRol"
+												th:onclick="'javascript:fntPermisos(' + ${rol.id} + ')'"
+												title="Asignar permisos">
+												<i class="fa fa-key"></i>
+											</button>
+											<button class="btn btn-primary  btn-sm btnEditRol"
+												th:onclick="'javascript:fntEditarRol(' + ${rol.id} + ')'"
+												title="Editar rol">
+												<i class="fa fa-pencil"></i>
+											</button>
+											<button class="btn btn-danger btn-sm btnDelRol"
+												th:disabled="${rol.nombre=='Administrador'}"
+												th:onclick="'javascript:fntEliminarRol(' + ${rol.id} + ')'"
+												title="Eliminar rol">
+												<i class="fa fa-trash"></i>
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script th:inline="javascript">
+	function activarBoton() {
+		const nombreInput = document.getElementById('nombre');
+		const descripcionInput = document.getElementById('descripcion');
+		const estadoInput = document.getElementById('estado');
+		const btnEnviar = document.getElementById('btnActionForm');
+		
+		btnEnviar.disabled = true;
+		nombreInput.value = "";
+		descripcionInput.value = "";
+		estadoInput.value = "";
+	
+		let validoNombre = false;
+		let validoDescripcion = false;
+		let validoEstado = false;
+	
+	
+		function validarFormulario(e) {
+			const nombre = nombreInput.value.trim();
+			const descripcion = descripcionInput.value.trim();
+			const estado = estadoInput.value.trim();
+	
+			validoNombre = nombre !== '';
+			validoDescripcion = descripcion !== '';
+			validoEstado = estado !== '';
+	
+			if (
+				validoNombre &&
+				validoDescripcion &&
+				validoEstado
+			) {
+				btnEnviar.disabled = false;
+			} else {
+				btnEnviar.disabled = true;
+			}
+		}
+		nombreInput.addEventListener('input', validarFormulario);
+		descripcionInput.addEventListener('input', validarFormulario);
+		estadoInput.addEventListener('change', validarFormulario);
+	}
+	async function fntPermisos(idRole) {
+		const tBody = document.getElementById("tBodyContext");
+		tBody.innerHTML = "";
+		let ajaxUrl = "/roles/permisos/" + idRole;
+		let res = await fetch(ajaxUrl),
+		  json = await res.json();
+		if (json) {
+		    document.getElementById("idrol").value = json.roleId;
+		    document.getElementById("countModulos").value = json.modulePermissions.length;
+			json.modulePermissions.forEach((y) => {
+		        let r = y.permits.read == 1 ? "checked" : "",
+		          w = y.permits.write == 1 ? "checked" : "",
+		          u = y.permits.update == 1 ? "checked" : "",
+		          d = y.permits.delete == 1 ? "checked" : "";
+		        let content = `
+		          <tr>
+		            <td>
+		              ${y.moduleId}
+		              <input type="hidden" name="modulos[${y.moduleId}][idModulo]" value="${y.moduleId}" required>
+		            </td>
+		            <td>
+		              ${y.moduleName}
+		            </td>
+		            <td>
+		              <div class="form-check form-switch form-switch-lg" dir="ltr">
+		                <input type="checkbox" class="form-check-input" name="modulos[${y.moduleId}][r]" ${r}>
+		              </div>
+		            </td>
+		            <td>
+		              <div class="form-check form-switch form-switch-lg" dir="ltr">
+		                <input type="checkbox" class="form-check-input" name="modulos[${y.moduleId}][w]" ${w}>
+		              </div>
+		            </td>
+		            <td>
+		              <div class="form-check form-switch form-switch-lg" dir="ltr">
+		                <input type="checkbox" class="form-check-input" name="modulos[${y.moduleId}][u]" ${u}>
+		              </div>
+		            </td>
+		            <td>
+		              <div class="form-check form-switch form-switch-lg" dir="ltr">
+		                <input type="checkbox" class="form-check-input" name="modulos[${y.moduleId}][d]" ${d}>
+		              </div>
+		            </td>
+		          </tr>
+		        `;
+		        tBody.innerHTML += content;
+		      });
+			document.querySelector("#formPermisos").addEventListener("submit", fntSavePermisos, false);
+		    $("#modalPermisos").modal("show");
+		 }
+	}
+	async function fntSavePermisos(event) {
+		  event.preventDefault();
+		  const idRol = document.getElementById("idrol").value;
+		  let formElement = document.querySelector("#formPermisos");
+		  let formData = new FormData(formElement);
+		  let values = document.getElementById("countModulos").value;
+		  let permisos = [];
+		  let roles_id = formData.get("idrol");
+		  for (let i = 1; i <= values; i++) {
+		    let modulos_id = formData.get(`modulos[${i}][idModulo]`);
+		    let read = formData.get(`modulos[${i}][r]`) ? true : false;
+		    let write = formData.get(`modulos[${i}][w]`) ? true : false;
+		    let update = formData.get(`modulos[${i}][u]`) ? true : false;
+		    let deleteP = formData.get(`modulos[${i}][d]`) ? true : false;
+		    permisos.push({ roles_id, modulos_id, read, write, update, delete:deleteP });
+		  }
+		  let options = {
+		      method: "POST",
+		      headers: {
+		    	  "Content-type": "application/json",
+		      },
+		      body: JSON.stringify({"permisos":permisos}),
+		    },
+		    res = await fetch("/roles/permisos/"+idRol, options);
+		  $("#modalPermisos").modal("hide");
+		}
+	async function fntEliminarRol(idrol) {
+		swal({
+			title: "Eliminar Rol",
+			text: "¿Realmente quiere eliminar el Rol?",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Si, eliminar!",
+			cancelButtonText: "No, cancelar!",
+			closeOnConfirm: false,
+			closeOnCancel: true
+		}, async function (isConfirm) {
+
+			if (isConfirm) {
+				let res = await fetch(`/roles/eliminar/${idrol}`, {
+				    method: 'DELETE'
+				}),
+					json = await res.json();
+				if (json) {
+					swal("Eliminar!", "Rol eliminado correctamente.", "success");
+					location.reload(); 
+				} else {
+					swal("Atención!",  "No se pudo eliminar el rol.", "error");
+				}
+			}
+
+		});
+	}
+	async function fntEditarRol(idRol) {
+		activarBoton();
+		document.querySelector("#id").value = "";
+		document.querySelector("#nombre").value = "";
+		document.querySelector("#descripcion").value = "";
+		document.querySelector("#estado").value = "";
+		document.querySelector('#titleModal').innerHTML = "Actualizar Rol";
+		document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+		document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+		document.querySelector('#btnText').innerHTML = "Actualizar";
+		let ajaxUrl = "roles/editar/" + idRol;
+		const res = await fetch(ajaxUrl);
+		const json = await res.json();
+		if (json) {
+			var formRol = document.getElementById('formId');
+			const rolId = formRol.setAttribute('action',`roles/editar/${json.id}`);
+			document.querySelector("#_method").value = "put";
+			document.querySelector("#id").value = json.id;
+			document.querySelector("#nombre").value = json.nombre;
+			document.querySelector("#descripcion").value = json.descripcion;
+			if(json.estado == 1){
+	            document.querySelector("#estado").value = 1;
+	        }else{
+	        	document.querySelector("#estado").value = 2;
+	        }
+		}
+		$('#modalFormRol').modal('show');
+	}
+	function openModal() {
+		var formRol = document.getElementById('formId');
+		const rolId = formRol.setAttribute('action','roles/guardar');
+		document.querySelector("#_method").value = "post";
+		document.querySelector("#id").value = "";
+		document.querySelector("#nombre").value = "";
+		document.querySelector("#descripcion").value = "";
+		document.querySelector("#estado").value = "";
+		document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+		document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+		document.querySelector('#btnText').innerHTML = "Guardar";
+		document.querySelector('#titleModal').innerHTML = "Nuevo Rol";
+		$('#modalFormRol').modal('show');
+		activarBoton();
+	}
+</script>
+<div th:replace="fragments/roles_form"></div>
+<div th:replace="fragments/permisos_form"></div>
+<div th:replace="fragments/footer"></div>
