@@ -32,7 +32,7 @@ import lombok.ToString;
 public class Inventory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 	@NotNull
 	private int amount;
 	@NotBlank
