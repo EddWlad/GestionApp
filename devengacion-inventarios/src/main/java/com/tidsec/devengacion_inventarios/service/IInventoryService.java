@@ -11,6 +11,7 @@ import com.tidsec.devengacion_inventarios.entity.Inventory;
 public interface IInventoryService {
     List<Inventory> getAllActiveInventories();
     Optional<Inventory> getInventoryById(Integer id);
+    Inventory getById(Integer id);
     Inventory saveInventory(Inventory inventory);
     Inventory updateInventory(Integer id, Inventory updatedInventory);
     boolean deleteInventory(Integer id);

@@ -140,5 +140,10 @@ public class InventoryServiceImpl implements IInventoryService {
 	    }
 	}
 
+	@Override
+	public Inventory getById(Integer id) {
+		return inventoryRepository.findById(id).orElse(null);
+	}
+
 
 }

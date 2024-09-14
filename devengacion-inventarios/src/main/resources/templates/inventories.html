@@ -39,28 +39,28 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="inventario : ${listarInventarios}">
-                                    <td>[[${inventario.id}]]</td>
-                                    <td>[[${inventario.grupoTecnico.codigo}]]</td>
-                                    <td>[[${inventario.fechaCarga}]]</td>
+                                <tr th:each="inventories : ${listInventories}">
+                                    <td>[[${inventories.id}]]</td>
+                                    <td>[[${inventories.technicalGroup.name}]]</td>
+                                    <td>[[${inventories.dateDownload}]]</td>
                                     <td>
-                                        <span th:if="${inventario.estado == 1}">
+                                        <span th:if="${inventories.state == 1}">
                                             <span class="badge badge-success">Activo</span>
                                         </span>
-                                        <span th:if="${inventario.estado == 0}">
+                                        <span th:if="${inventories.state == 0}">
                                             <span class="badge badge-danger">Inactivo</span>
                                         </span>
                                     </td>
                                     <td class="col-2">
                                         <button type="button"
-                                                th:onclick="'javascript:verInventario(' + ${inventario.id} + ')'"
+                                                th:onclick="'javascript:seeInventory(' + ${inventories.id} + ')'"
                                                 title="Ver" class="fa fa-eye btn btn-info" style="color: white;"></button>
                                         <button type="button"
-                                                th:onclick="'javascript:editarInventario(' + ${inventario.id} + ')'"
+                                                th:onclick="'javascript:editInventory(' + ${inventories.id} + ')'"
                                                 title="Editar" class="fa-regular fa fa-pencil btn btn-primary"
                                                 style="color: white;"></button>
                                         <button type="button"
-                                                th:onclick="'javascript:eliminarInventario(' + ${inventario.id} + ')'"
+                                                th:onclick="'javascript:deleteInventory(' + ${inventories.id} + ')'"
                                                 title="Eliminar" id="btnDelete"
                                                 class="fa-regular fa fa-trash btn btn-danger"
                                                 style="color: white;"></button>
@@ -79,11 +79,11 @@
 
 document.addEventListener("DOMContentLoaded", function() {
     window.verInventario = function(id) {
-        fetch(`/inventarios/${id}`)
+        fetch(`/inventories/${id}`)
             .then(response => response.json())
             .then(data => {
-                poblarModal(data, false); // false indica modo vista
-                $('#modalFormInventario').modal('show');
+                poblarModal(data, false);
+                $('#modalFormInventory').modal('show');
             })
             .catch(error => console.error('Error al obtener el inventario:', error));
     };
