@@ -210,7 +210,6 @@
         },
         body: JSON.stringify({ permits }),
       };
-
       let res = await fetch(`/roles/permits/${idRol}`, options);
       if (res.ok) {
         $("#modalPermisos").modal("hide");
