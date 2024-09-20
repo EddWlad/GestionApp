@@ -28,7 +28,7 @@ public class Permits {
 	@ManyToOne
 	@JoinColumn(name = "role_id")
 	@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-	private Role roles;
+	private Role role;
 	
 	@ManyToOne
 	@JoinColumn(name = "modules_id")

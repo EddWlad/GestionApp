@@ -10,7 +10,7 @@ import com.tidsec.devengacion_inventarios.entity.Permits;
 
 @Repository
 public interface IPermitsRepository extends JpaRepository<Permits, Integer>{
-    Optional<Permits> findByRole_idAndModulos_id(Integer roleId, Integer moduleId);
+    Optional<Permits> findByRole_idAndModules_id(Integer role_id, Integer modules_id);
 	List<Permits> findByRole_id(Integer roleId);
 	void deleteByRole_id(Integer roleId);
 }

@@ -39,6 +39,11 @@ public class Modules {
 	@NotNull
 	@Size(min = 3, max = 100)
 	private String description;
+
+	@NotBlank
+	@NotNull
+	@Size(min = 3, max = 100)
+	private String endpoint;
     
 	@Column(columnDefinition = "Integer default 1")
 	private Integer status;

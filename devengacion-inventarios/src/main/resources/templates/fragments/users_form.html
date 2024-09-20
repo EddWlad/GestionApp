@@ -1,0 +1,85 @@
+<!-- Modal -->
+<div class="modal fade" id="modalFormUsuario" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header headerRegister">
+				<h5 class="modal-title" id="titleModal">Nuevo Usuario</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="tile">
+					<div class="tile-body">
+						<form th:method="post" enctype="multipart/form-data" id="formId"
+							th:action="@{'/users/save'}">
+							<input type="hidden" id="_method" name="_method" value="post">
+							<input type="hidden" id="id" name="id" value="">
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label class="control-label">Nombre</label>
+									<input class="form-control valid validText" id="name" name="name" type="text"
+										placeholder="Nombre del usuario">
+								</div>
+								
+								<div class="form-group col-md-6">
+									<label class="control-label">Apellido</label>
+									<input class="form-control valid validText" id="lastname" name="lastName" type="text"
+										placeholder="Apellido del usuario" />
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label class="control-label">Telefóno</label>
+									<input class="form-control valid validNumber" id="phone" name="phone" type="text"
+										placeholder="Telefóno del usuario" />
+								</div>							
+								<div class="form-group col-md-6">
+									<label class="control-label">Correo Electrónico</label>
+									<input class="form-control valid validEmail" id="email" name="email" type="email"
+										placeholder="Correo electrónico del usuario" />
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label class="control-label">Contraseña</label>
+									<input class="form-control" id="password" name="password" type="password"
+										placeholder="Ingrese la contraseña" />
+								</div>
+								<div class="form-group col-md-6">
+									<label class="control-label">Confirmar Contraseña</label>
+									<input class="form-control" id="confirmPassword" name="confirmPassword"
+										type="password" placeholder="Confirma la contraseña" />
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label for="rol">Rol</label>
+									<select class="form-control" id="role" name="role">
+										<option value="" disabled selected>Seleccione el rol</option>
+										<option th:each="r:${roles}" th:value="${r.id}" th:text="${r.name}"></option>
+									</select>
+								</div>
+								<div class="form-group col-md-6">
+									<label for="exampleSelect1">Estado</label>
+									<select class="form-control" id="status" name="status">
+										<option value="" disabled selected>Seleccione el estado</option>
+										<option value="1">Activo</option>
+										<option value="2">Inactivo</option>
+									</select>
+								</div>
+							</div>
+							<div class="tile-footer">
+								<button id="btnActionForm" class="btn btn-primary" type="submit"><i
+										class="fa fa-fw fa-lg fa-check-circle"></i><span
+										id="btnText">Guardar</span></button>&nbsp;&nbsp;&nbsp;<a
+									class="btn btn-secondary" href="#" data-dismiss="modal"><i
+										class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

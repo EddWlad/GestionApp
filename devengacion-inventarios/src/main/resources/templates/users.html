@@ -15,7 +15,7 @@
 			</div>
 			<ul class="app-breadcrumb breadcrumb">
 				<li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
-				<li class="breadcrumb-item"><a href="#">Roles</a></li>
+				<li class="breadcrumb-item"><a href="/users">Usuarios</a></li>
 			</ul>
 		</div>
 		<div class="row">
@@ -40,12 +40,12 @@
 								<tbody>
 									<tr th:each="usuario : ${usuarios}">
 										<td>[[${usuario.id}]]</td>
-										<td>[[${usuario.nombre}]]</td>
-										<td>[[${usuario.apellido}]]</td>
-										<td>[[${usuario.correoElectronico}]]</td>
-										<td><span th:if="${usuario.estado == 1}"> <span
+										<td>[[${usuario.name}]]</td>
+										<td>[[${usuario.lastName}]]</td>
+										<td>[[${usuario.email}]]</td>
+										<td><span th:if="${usuario.status == 1}"> <span
 												class="badge badge-success">Activo</span>
-										</span> <span th:if="${usuario.estado == 2}"> <span
+										</span> <span th:if="${usuario.status == 2}"> <span
 												class="badge badge-danger">Inactivo</span>
 										</span></td>
 										<td class="form-group col-md-2">
@@ -73,19 +73,19 @@
 <script th:inline="javascript">
 
 	function activarBoton() {
-		const nombreInput = document.getElementById('nombre');
-		const apellidoInput = document.getElementById('apellido');
-		const identificacionInput = document.getElementById('identificacion');
-		const correoInput = document.getElementById('correoElectronico');
-		const contrasenaInput = document.getElementById('contrasena');
-		const confirmarContrasenaInput = document.getElementById('confirmarContrasena');
-		const estadoInput = document.getElementById('estado');
-		const rolInput = document.getElementById('roles');
+		const nombreInput = document.getElementById('name');
+		const apellidoInput = document.getElementById('lastname');
+		const telefonoInput = document.getElementById('phone');
+		const correoInput = document.getElementById('email');
+		const contrasenaInput = document.getElementById('password');
+		const confirmarContrasenaInput = document.getElementById('confirmPassword');
+		const estadoInput = document.getElementById('status');
+		const rolInput = document.getElementById('role');
 		const btnEnviar = document.getElementById('btnActionForm');
 		btnEnviar.disabled = true;
 		nombreInput.value = "";
 		apellidoInput.value = "";
-		identificacionInput.value = "";
+		telefonoInput.value = "";
 		correoInput.value = "";
 		contrasenaInput.value = "";
 		confirmarContrasenaInput.value = "";
@@ -104,7 +104,7 @@
 		function validarFormulario(e) {
 			const nombre = nombreInput.value.trim();
 			const apellido = apellidoInput.value.trim();
-			const identificacion = identificacionInput.value.trim();
+			const telefono = telefonoInput.value.trim();
 			const correo = correoInput.value.trim();
 			const contrasena = contrasenaInput.value.trim();
 			const confirmarContrasena = confirmarContrasenaInput.value.trim();
@@ -113,7 +113,7 @@
 
 			validoNombre = nombre !== '';
 			validoApellido = apellido !== '';
-			validoIdentificacion = identificacion !== '';
+			validoTelefono = telefono !== '';
 			validoCorreo = correo.includes('@') && correo.includes('.');
 			validoContrasena = contrasena.length >= 8;
 			validoConfirmarContrasena = confirmarContrasena === contrasena;
@@ -137,7 +137,7 @@
 			if (
 				validoNombre &&
 				validoApellido &&
-				validoIdentificacion &&
+				validoTelefono &&
 				validoCorreo &&
 				validoContrasena &&
 				validoConfirmarContrasena &&
@@ -151,7 +151,7 @@
 		}
 		nombreInput.addEventListener('input', validarFormulario);
 		apellidoInput.addEventListener('input', validarFormulario);
-		identificacionInput.addEventListener('input', validarFormulario);
+		telefonoInput.addEventListener('input', validarFormulario);
 		correoInput.addEventListener('input', validarFormulario);
 		contrasenaInput.addEventListener('input', validarFormulario);
 		estadoInput.addEventListener('change', validarFormulario);
@@ -172,7 +172,7 @@
 		}, async function (isConfirm) {
 
 			if (isConfirm) {
-				let res = await fetch(`/usuarios/eliminar/${idUsuario}`, {
+				let res = await fetch(`/users/delete/${idUsuario}`, {
 				    method: 'DELETE'
 				}),
 					json = await res.json();
@@ -192,25 +192,25 @@
 		document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
 		document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
 		document.querySelector('#btnText').innerHTML = "Actualizar";
-		let ajaxUrl = "usuarios/editar/" + idUsuario;
+		let ajaxUrl = "users/update/" + idUsuario;
 		try {
 			const res = await fetch(ajaxUrl);
 			const json = await res.json();
 			if (json) {
 				const formUser = document.getElementById('formId');
-				const rolId = formUser.setAttribute('action', `usuarios/editar/${json.id}`);
+				const rolId = formUser.setAttribute('action', `users/update/${json.id}`);
 				document.querySelector("#_method").value = "put";
 				document.querySelector("#id").value = json.id;
-				document.querySelector("#nombre").value = json.nombre;
-				document.querySelector("#apellido").value = json.apellido;
-				document.querySelector("#identificacion").value = json.identificacion;
-				document.querySelector("#correoElectronico").value = json.correoElectronico;
-				 if(json.estado == 1){
-		            document.querySelector("#estado").value = 1;
+				document.querySelector("#name").value = json.name;
+				document.querySelector("#lastname").value = json.lastName;
+				document.querySelector("#phone").value = json.phone;
+				document.querySelector("#email").value = json.email;
+				 if(json.status == 1){
+		            document.querySelector("#status").value = 1;
 		        }else{
-		        	document.querySelector("#estado").value = 2;
+		        	document.querySelector("#status").value = 2;
 		        }
-				document.querySelector("#roles").value = json.roles.id;
+				document.querySelector("#role").value = json.role.id;
 			}
 			$('#modalFormUsuario').modal('show');
 		} catch (error) {
@@ -219,7 +219,7 @@
 	}
 	function openModal() {
 		var formUser = document.getElementById('formId');
-		formUser.setAttribute('action', 'usuarios/guardar');
+		formUser.setAttribute('action', 'users/save');
 		document.querySelector("#id").value = "";
 		document.querySelector("#_method").value = "post";
 		document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
@@ -230,5 +230,5 @@
 		activarBoton();
 	}
 </script>
-<div th:replace="fragments/usuarios_form"></div>
+<div th:replace="fragments/users_form"></div>
 <div th:replace="fragments/footer"></div>

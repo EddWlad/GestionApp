@@ -9,4 +9,5 @@ import com.tidsec.devengacion_inventarios.entity.Modules;
 public interface IModulesRepository extends JpaRepository<Modules, Integer>{
     List<Modules> findByStatusNot(Integer status);
 	Modules findByName(String name);
+    Modules findByEndpointIgnoreCase(String endpoint);
 }

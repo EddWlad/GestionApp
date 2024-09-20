@@ -5,7 +5,7 @@ import java.util.List;
 import com.tidsec.devengacion_inventarios.entity.Permits;
 
 public interface IPermitsService {
-    Permits getForRoles(Integer role_id, Integer modulos_id);
+    Permits getForRoles(Integer role_id, Integer modules_id);
 	Permits getForId(Integer id);
 	Permits createPermit(Permits permit);
 	boolean deletePermitForRole(Integer role_id);

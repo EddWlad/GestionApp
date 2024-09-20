@@ -3,11 +3,13 @@ package com.tidsec.devengacion_inventarios.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.tidsec.devengacion_inventarios.entity.Role;
 import com.tidsec.devengacion_inventarios.repository.IRolesRepository;
 import com.tidsec.devengacion_inventarios.service.IRolesService;
 
+@Service
 public class RolesServiceImpl implements IRolesService{
 
     @Autowired

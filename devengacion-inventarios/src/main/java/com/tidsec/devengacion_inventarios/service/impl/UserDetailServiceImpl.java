@@ -9,10 +9,12 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import com.tidsec.devengacion_inventarios.entity.Users;
 import com.tidsec.devengacion_inventarios.repository.IUsersRepository;
 
+@Service
 public class UserDetailServiceImpl implements UserDetailsService{
 @Autowired
 	private IUsersRepository usersRepository;

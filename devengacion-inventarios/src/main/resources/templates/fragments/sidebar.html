@@ -1,11 +1,10 @@
 <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
-<aside class="app-sidebar bg-danger">
+<aside class="app-sidebar bg-dark">
 	<div class="app-sidebar__user">
 		<img class="app-sidebar__user-avatar">
 		<div>
-			<!--th:text="${nombreUsuario}" th:text="${nombreRol}" -->
-			<p class="app-sidebar__user-name">EBICS SA - CONECEL</p>
-			<p class="app-sidebar__user-designation">ADMINISTRADOR</p>
+			<p class="app-sidebar__user-name" th:text="${nombreUsuario}"></p>
+			<p class="app-sidebar__user-designation" th:text="${nombreRol}"></p>
 		</div>
 	</div>
 	<ul class="app-menu">
@@ -23,7 +22,7 @@
 					class="app-menu__icon fa fa-users"></i><span class="app-menu__label">Usuarios</span><i
 					class="treeview-indicator fa fa-angle-right"></i></a>
 			<ul class="treeview-menu">
-				<li><a class="treeview-item" th:href="@{/usuarios}"><i class="icon fa fa-circle-o"></i> Usuarios</a>
+				<li><a class="treeview-item" th:href="@{/users}"><i class="icon fa fa-circle-o"></i> Usuarios</a>
 				</li>
 				<li><a class="treeview-item" th:href="@{/roles}"><i class="icon fa fa-circle-o"></i> Roles</a></li>
 			</ul>
